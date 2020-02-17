@@ -31,7 +31,6 @@ const (
 
 // UploadOptions upload response
 type UploadOptions struct {
-	RawBuffer string
 	// filename to upload
 	FileName string
 	// assign bucket subdirectory, otherwise object will be saved under root
