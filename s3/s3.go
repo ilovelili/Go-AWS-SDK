@@ -61,16 +61,16 @@ type context struct {
 	bucket   string
 }
 
-// service service defines context
-type service struct {
+// Service service includes context and credentials
+type Service struct {
 	context      *context
 	accessKey    string
 	accessSecret string
 }
 
 // NewService service initializer
-func NewService(key, secret string) *service {
-	return &service{
+func NewService(key, secret string) *Service {
+	return &Service{
 		context:      new(context),
 		accessKey:    key,
 		accessSecret: secret,
@@ -78,29 +78,29 @@ func NewService(key, secret string) *service {
 }
 
 // GetEndPoint get endpoint
-func (s *service) GetEndPoint() string {
+func (s *Service) GetEndPoint() string {
 	return "s3.amazonaws.com"
 }
 
 // SetBucket set bucket
-func (s *service) SetBucket(bucket string) {
+func (s *Service) SetBucket(bucket string) {
 	s.context.check()
 	s.context.bucket = bucket
 }
 
 // GetBucket get bucket
-func (s *service) GetBucket() string {
+func (s *Service) GetBucket() string {
 	return s.context.bucket
 }
 
 // SetRegion set region
-func (s *service) SetRegion(region string) {
+func (s *Service) SetRegion(region string) {
 	s.context.check()
 	s.context.region = region
 }
 
 // GetRegion get region
-func (s *service) GetRegion() string {
+func (s *Service) GetRegion() string {
 	return s.context.region
 }
 
@@ -108,7 +108,7 @@ var once sync.Once
 var instance *s3.S3
 
 // client init client
-func (s *service) client() *s3.S3 {
+func (s *Service) client() *s3.S3 {
 	once.Do(func() {
 		sess := session.New(&aws.Config{
 			Region:      aws.String(s.GetRegion()),
@@ -122,7 +122,7 @@ func (s *service) client() *s3.S3 {
 }
 
 // Upload upload file
-func (s *service) Upload(opts *UploadOptions) (resp *UploadResponse) {
+func (s *Service) Upload(opts *UploadOptions) (resp *UploadResponse) {
 	resp = new(UploadResponse)
 
 	client := s.client()
@@ -191,7 +191,7 @@ func (s *service) Upload(opts *UploadOptions) (resp *UploadResponse) {
 }
 
 // AsyncUpload async upload
-func (s *service) AsyncUpload(opts *UploadOptions) (respchan chan<- *UploadResponse) {
+func (s *Service) AsyncUpload(opts *UploadOptions) (respchan chan<- *UploadResponse) {
 	respchan = make(chan *UploadResponse)
 	go func() {
 		respchan <- s.Upload(opts)
